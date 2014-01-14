@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css' />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta http-equiv="x-ua-compatible" content="IE=Edge" />
+    <link href="assets/css/app.css" rel="stylesheet" />
+    <link href="assets/css/media-queries.css" rel="stylesheet" />
+</head>
+<body>
+    <script id="bubbleTooltip" type="text/x-ig-template">
+        <span class="tooltip-header">${item.displayName}</span><br/>
+        <table>
+            <tr>
+                <td class="tooltip-label">${item.indicator1.displayName}:</td>
+                <td class="tooltip-value">${item.value1}</td>
+                </tr>
+                <tr>
+                <td class="tooltip-label">${item.indicator2.displayName}:</td>
+                <td class="tooltip-value">${item.value2}</td>
+                </tr>
+                <tr>
+                <td class="tooltip-label">${item.indicator4.displayName}:</td>
+                <td class="tooltip-value">${item.value4}</td>
+                </tr>
+        </table>
+    </script>
+    <script id="mainPanelTemplate" type="text/x-ig-template">
+        <div class="logo-main">
+            <img src="assets/images/logo.svg" />
+        </div>
+        <div class="left-section">
+            <h2 class='countrySelection'>${LimitCountriesToView}</h2>
+            <h5 class='selectionRestriction'>${SelectUpToFourToCompare}</h5>
+            <table id="jsCountriesGrid"></table>
+            <a href="#" id="jsDeselectAllCountriesButton"></a>
+            <div class="jsAboutButton">
+                <span id="jsAboutButton_icon"></span>
+                <span id="jsAboutButton_lbl"></span>
+            </div>
+        </div>
+    </script>
+    <script id="chartsPanelTemplate" type="text/x-ig-template">
+        <div class="combinedCharts">
+            <div class="charts-header">
+                <div class="preferencesHolder">
+                    <a href="#" id="jsOptionsButton"></a>
+                    <div id="jsOptionsDialog">
+                        <div class="dialogOptionHeader">
+                            <label for="jsBubbleIndicator">${SizeBubblesBy}</label>
+                            <label class='scaleText' for="jsBubbleIndicator">${Scale}</label>
+                        </div>
+                        <div class="dialogOptionContent">
+                            <div class="indicatorContainer">
+                                <select id="jsBubbleIndicator"></select>
+                            </div>
+                            <select id="jsBubbleLogarithm">
+                                <option value="log">${Log}</option>
+                                <option value="lin" selected="selected">${Lin}</option>
+                            </select>
+                        </div>
+                        <div class="dialogOptionHeader qualityHeader">
+                            <label for="jsBubbleQuality">${ChartRenderingQuality}</label>
+                        </div>
+                        <div class="dialogOptionContent">
+                            <div class="qualityContainer">
+                                <select id="jsBubbleQuality">
+                                    <option value="low" selected="selected">${Low}</option>
+                                    <option value="high">${High}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" id="jsExpandCollapseButton" data-state="collapse"></a>
+                </div>
+                <div class="sliderHolder">
+                    <a href="#" id="jsPlayButton"></a>
+                    <div id="jsYearText" class="yearText"></div>
+                    <div class='sliderContainer'>
+                        <div id="jsSlider" class="slider"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bubbleChartYControls">
+                <select id="jsBubbleChartYLogarithm">
+                    <option value="log">${Log}</option>
+                    <option value="lin" selected="selected">${Lin}</option>
+                </select>
+                <select id="jsBubbleChartYIndicator">
+                </select>
+            </div>
+            <div id="jsBubbleChart" class="chart">
+            </div>
+            <div class="bubbleChartXControls">
+                <select id="jsBubbleChartXIndicator">
+                </select>
+                <select id="jsBubbleChartXLogarithm">
+                    <option value="log" selected="selected">${Log}</option>
+                    <option value="lin">${Lin}</option>
+                </select>
+            </div>
+        </div>
+        <div class="selectedCharts">
+            <div class="trendChartYControls">
+                <select id="jsTrendChartYLogarithm">
+                    <option value="log">${Log}</option>
+                    <option value="lin" selected="selected">${Lin}</option>
+                </select>
+                <select id="jsTrendChartYIndicator"></select>
+            </div>
+            <div id="jsTrendChartLegend">
+                <h5>${SelectedCountries}</h5>
+            </div>
+            <div id="jsTrendChart"></div>
+            <div class="trendChartXText">${TimeYear}</div>
+        </div>    
+    </script>
+
+    <div id="panels">
+        <div id="mainPanel" class="panel"></div>
+        <div id="chartsPanel" class="panel"></div>
+    </div>
+
+    <div id="jsStartLoadIndicator">
+        <div class="overlay">
+            <img src="assets/images/logo.svg" />
+            <div class="loading"></div>
+        </div>
+    </div>
+
+    <script src="Scripts/modernizr-2.6.2.js"></script>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/jquery-ui-1.10.3.min.js"></script>
+    <script src="igniteui/js/infragistics.core.js"></script>
+    <script src="igniteui/js/infragistics.lob.js"></script>
+    <script src="igniteui/js/infragistics.dv.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        $(document).ready(function () {
+            WorldStats.Helpers.loadResources(WorldStats.config.resources).done(function () {
+                var startLoadIndicator = new WorldStats.Helpers.LoadIndicator("jsStartLoadIndicator");
+
+                // Sets loading text
+                $('.loading').text(WorldStats.Resources.General.Loading);
+                
+                startLoadIndicator.destroyWhenTheComponentsAreLoaded([{
+                    selector: "#jsBubbleChart",
+                    className: " .ui-chart-container"
+                }, {
+                    selector: "#jsTrendChart",
+                    className: " .ui-chart-container"
+                }]);
+
+                WorldStats.init();
+            }).fail(function () {
+                alert(WorldStats.Resources.General.LoadResourcesError || "Oops... something went wrong. Please reload the application.");
+                // location.reload();
+            });
+        });
+    </script>
+</body>
+</html>
