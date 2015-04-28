@@ -912,7 +912,7 @@ WorldStats.Panels.charts = function (element, context) {
         countryToBeRemoved,
         resGeneral = WorldStats.Resources.General,
         setComboClass = function (selector, className) {
-            $(selector).data().igCombo._fieldHolder.parent().addClass(className);
+            $(selector).parent().find('.ui-igcombo-wrapper').addClass(className);
         };
 
     // private methods
@@ -968,7 +968,7 @@ WorldStats.Panels.charts = function (element, context) {
             width: indicatorComboWidth,
             height: indicatorComboHeight,
             dropDownButtonTitle: resGeneral.ShowDropDown,
-            selectedItems: [{
+            initialSelectedItems: [{
                 index: 2
             }],
             enableClearButton: false,
@@ -980,7 +980,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
                     for (i = 0; i < indicators.length; i++) {
-                        if (indicators[i].id == item.value) {
+                        if (indicators[i].id == item.data.id) {
                             break;
                         }
                     }
@@ -999,7 +999,7 @@ WorldStats.Panels.charts = function (element, context) {
             width: indicatorComboWidth,
             height: indicatorComboHeight,
             dropDownButtonTitle: resGeneral.ShowDropDown,
-            selectedItems: [{
+            initialSelectedItems: [{
                 index: 3
             }],
             enableClearButton: false,
@@ -1011,7 +1011,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
                     for (i = 0; i < indicators.length; i++) {
-                        if (indicators[i].id == item.value) {
+                        if (indicators[i].id == item.data.id) {
                             break;
                         }
                     }
@@ -1034,7 +1034,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
 
-                    if (item.value == "log") {
+                    if (item.data.Value === "log") {
                         indicator2IsLogarithmic = true;
                     } else {
                         indicator2IsLogarithmic = false;
@@ -1050,7 +1050,7 @@ WorldStats.Panels.charts = function (element, context) {
         $(trendChartYLogarithmSelector).igCombo({
             mode: "dropdown",
             width: logarithmComboWidth,
-            selectedItems: [{
+            initialSelectedItems: [{
                 index: 0
             }],
             dropDownButtonTitle: resGeneral.DropDownMessageForLogarithmSelector,
@@ -1059,7 +1059,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
 
-                    if (item.value == "log") {
+                    if (item.data.Value == "log") {
                         indicator3IsLogarithmic = true;
                     } else {
                         indicator3IsLogarithmic = false;
@@ -1077,7 +1077,7 @@ WorldStats.Panels.charts = function (element, context) {
             width: indicatorComboWidth,
             height: indicatorComboHeight,
             dropDownButtonTitle: resGeneral.ShowDropDown,
-            selectedItems: [{
+            initialSelectedItems: [{
                 index: 0
             }],
             enableClearButton: false,
@@ -1089,7 +1089,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
                     for (i = 0; i < indicators.length; i++) {
-                        if (indicators[i].id == item.value) {
+                        if (indicators[i].id == item.data.id) {
                             break;
                         }
                     }
@@ -1112,7 +1112,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
 
-                    if (item.value == "log") {
+                    if (item.data.Value == "log") {
                         indicator1IsLogarithmic = true;
                     } else {
                         indicator1IsLogarithmic = false;
@@ -1130,7 +1130,7 @@ WorldStats.Panels.charts = function (element, context) {
             width: '159px',
             height: '34px',
             dropDownButtonTitle: resGeneral.ShowDropDown,
-            selectedItems: [{
+            initialSelectedItems: [{
                 index: 3
             }],
             enableClearButton: false,
@@ -1142,7 +1142,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
                     for (i = 0; i < indicators.length; i++) {
-                        if (indicators[i].id == item.value) {
+                        if (indicators[i].id == item.data.id) {
                             break;
                         }
                     }
@@ -1166,7 +1166,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
 
-                    if (item.value == "log") {
+                    if (item.data.Value == "log") {
                         indicator4IsLogarithmic = true;
                     } else {
                         indicator4IsLogarithmic = false;
@@ -1189,7 +1189,7 @@ WorldStats.Panels.charts = function (element, context) {
                 if (ui.items) {
                     var item = ui.items[0];
 
-                    if (item.value == "low") {
+                    if (item.data.Value == "low") {
                         useQualityRender = false;
                     } else {
                         useQualityRender = true;
@@ -1319,6 +1319,10 @@ WorldStats.Panels.charts = function (element, context) {
                 enableCustomTooltip = true;
             }
         });
+
+        setTimeout(function () {
+            $(bubbleChartSelector).igDataChart("option", "width", "auto");
+        }, 100);
 
         //set minimal zoom
         $(bubbleChartSelector).data("igDataChart")._chart.windowRectMinWidth(0.25);
